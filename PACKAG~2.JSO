@@ -1,0 +1,19 @@
+{
+  "name": "fortune",
+  "version": "0.1.0",
+  "description": "MBTI x 혈액형 x 사주 종합운세 서비스 (기획서.md 기준 MVP)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "lunar-javascript": "^1.7.3",
+    "puppeteer": "^22.15.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED"
+}

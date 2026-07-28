@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans KR', sans-serif; }
+  body { width: 600px; height: 800px; background: linear-gradient(160deg, #2b2450 0%, #4a3f8c 55%, #6c5ce7 100%); color: #fff; display: flex; flex-direction: column; padding: 48px 40px; }
+  .badge { font-size: 15px; opacity: 0.75; letter-spacing: 2px; }
+  .date { font-size: 20px; font-weight: 700; margin-top: 8px; }
+  .element { font-size: 64px; font-weight: 900; margin-top: 28px; }
+  .mbti { font-size: 18px; opacity: 0.85; margin-top: 4px; }
+  .section { margin-top: 32px; }
+  .label { font-size: 14px; opacity: 0.7; margin-bottom: 6px; }
+  .text { font-size: 19px; line-height: 1.55; font-weight: 500; }
+  .lucky { margin-top: auto; display: flex; gap: 20px; }
+  .lucky-item { background: rgba(255,255,255,0.12); border-radius: 16px; padding: 14px 18px; font-size: 15px; text-align: center; flex: 1; }
+  .lucky-item b { display: block; font-size: 18px; margin-top: 4px; }
+  .footer { margin-top: 20px; font-size: 12px; opacity: 0.55; text-align: center; }
+</style>
+</head>
+<body>
+  <div class="badge">오늘의 종합운세</div>
+  <div class="date">{{DATE}}</div>
+  <div class="element">{{ELEMENT}} 기운</div>
+  <div class="mbti">{{MBTI}}</div>
+
+  <div class="section">
+    <div class="label">총운</div>
+    <div class="text">{{TOTAL}}</div>
+  </div>
+
+  <div class="section">
+    <div class="label">애정운</div>
+    <div class="text">{{LOVE}}</div>
+  </div>
+
+  <div class="lucky">
+    <div class="lucky-item">색<b>{{COLOR}}</b></div>
+    <div class="lucky-item">숫자<b>{{NUMBER}}</b></div>
+    <div class="lucky-item">방향<b>{{DIRECTION}}</b></div>
+  </div>
+
+  <div class="footer">재미로 보는 콘텐츠입니다 · fortune</div>
+</body>
+</html>
