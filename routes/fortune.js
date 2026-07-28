@@ -10,8 +10,24 @@ const router = express.Router();
 let browserPromise = null;
 function getBrowser() {
   if (!browserPromise) {
-    const puppeteer = require('puppeteer');
-    browserPromise = puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    // Vercel 등 서버리스 환경에서는 풀버전 puppeteer(내장 크로미움, 약 300MB)가
+    // 함수 배포 용량 제한을 초과해 크래시하므로, 배포 환경에서는
+    // puppeteer-core + @sparticuz/chromium(경량 크로미움 바이너리)을 사용한다.
+    // 로컬 개발 환경(VERCEL 환경변수 없음)에서는 기존 puppeteer를 그대로 사용한다.
+    if (process.env.VERCEL) {
+      const chromium = require('@sparticuz/chromium');
+      const puppeteer = require('puppeteer-core');
+      browserPromise = chromium.executablePath().then((executablePath) =>
+        puppeteer.launch({
+          args: chromium.args,
+          executablePath,
+          headless: chromium.headless,
+        })
+      );
+    } else {
+      const puppeteer = require('puppeteer');
+      browserPromise = puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    }
   }
   return browserPromise;
 }

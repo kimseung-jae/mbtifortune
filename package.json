@@ -8,8 +8,12 @@
     "dev": "node server.js"
   },
   "dependencies": {
+    "@sparticuz/chromium": "^123.0.1",
     "express": "^4.19.2",
     "lunar-javascript": "^1.7.3",
+    "puppeteer-core": "^22.15.0"
+  },
+  "devDependencies": {
     "puppeteer": "^22.15.0"
   },
   "engines": {
