@@ -8,16 +8,16 @@
     "dev": "node server.js"
   },
   "dependencies": {
-    "@sparticuz/chromium": "^123.0.1",
+    "@sparticuz/chromium": "143.0.4",
     "express": "^4.19.2",
     "lunar-javascript": "^1.7.3",
-    "puppeteer-core": "^22.15.0"
+    "puppeteer-core": "^25.4.0"
   },
   "devDependencies": {
-    "puppeteer": "^22.15.0"
+    "puppeteer": "^25.4.0"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20.11.0"
   },
   "license": "UNLICENSED"
 }
