@@ -93,7 +93,7 @@ router.post('/fortune/card', async (req, res) => {
     const browser = await getBrowser();
     const page = await browser.newPage();
     await page.setViewport({ width: 600, height: 800, deviceScaleFactor: 2 });
-    await page.setContent(html, { waitUntil: 'networkidle0' });
+    await page.setContent(html, { waitUntil: 'domcontentloaded' });
     const buffer = await page.screenshot({ type: 'png' });
     await page.close();
 
