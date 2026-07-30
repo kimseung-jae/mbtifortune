@@ -77,3 +77,13 @@ input, select {
 
 .card-preview { width: 100%; border-radius: 16px; margin-top: 16px; }
 .card-preview.hidden { display: none; }
+
+.history-card { margin-top: 20px; }
+.history-title { font-size: 15px; margin: 0 0 12px; color: #1a1a2e; }
+.history-empty { font-size: 13px; color: #a0a0ad; margin: 0; }
+.history-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.history-table.hidden { display: none; }
+.history-table th, .history-table td { text-align: left; padding: 10px 8px; border-bottom: 1px solid #e3e5ec; }
+.history-table th { color: #6b6b7b; font-weight: 700; font-size: 12px; }
+.history-table td:first-child { white-space: nowrap; color: #6b6b7b; }
+.history-table tbody tr:last-child td { border-bottom: none; }
