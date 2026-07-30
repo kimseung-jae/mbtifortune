@@ -1,85 +1,89 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>fortune — MBTI x 혈액형 x 사주 종합운세</title>
-<link rel="stylesheet" href="/style.css">
-</head>
-<body>
-  <main class="wrap">
-    <header class="header">
-      <h1>오늘의 종합운세</h1>
-      <p class="sub">생년월일 · MBTI · 혈액형으로 보는 재미 운세 · 로그인 없이 무료</p>
-    </header>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: 'Pretendard', -apple-system, 'Malgun Gothic', sans-serif;
+  background: #f5f6fa;
+  color: #1a1a2e;
+}
+.wrap { max-width: 480px; margin: 0 auto; padding: 32px 20px 60px; }
+.header h1 { font-size: 24px; margin: 0 0 6px; }
+.header .sub { font-size: 14px; color: #6b6b7b; margin: 0 0 24px; }
 
-    <section id="form-view" class="card">
-      <div class="field">
-        <label>태어난 날짜</label>
-        <div class="row">
-          <select id="calendar">
-            <option value="solar">양력</option>
-            <option value="lunar">음력</option>
-          </select>
-          <input id="year" type="number" placeholder="년(YYYY)" min="1900" max="2100">
-          <input id="month" type="number" placeholder="월" min="1" max="12">
-          <input id="day" type="number" placeholder="일" min="1" max="31">
-        </div>
-      </div>
+.card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.card.hidden { display: none; }
 
-      <div class="field">
-        <label>태어난 시간 (모르면 비워두세요)</label>
-        <input id="hour" type="number" placeholder="시(0~23), 모르면 비워두기" min="0" max="23">
-      </div>
+.field { margin-bottom: 18px; }
+.field label { display: block; font-size: 13px; color: #6b6b7b; margin-bottom: 6px; }
+.row { display: flex; gap: 8px; }
 
-      <div class="field">
-        <label>MBTI</label>
-        <select id="mbti">
-          <option value="">선택하세요</option>
-          <option>ISTJ</option><option>ISFJ</option><option>INFJ</option><option>INTJ</option>
-          <option>ISTP</option><option>ISFP</option><option>INFP</option><option>INTP</option>
-          <option>ESTP</option><option>ESFP</option><option>ENFP</option><option>ENTP</option>
-          <option>ESTJ</option><option>ESFJ</option><option>ENFJ</option><option>ENTJ</option>
-        </select>
-      </div>
+input, select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #e3e5ec;
+  border-radius: 12px;
+  font-size: 15px;
+  background: #fafafe;
+}
+.row input { flex: 1; min-width: 0; }
+.row select { flex: 0 0 90px; }
 
-      <div class="field">
-        <label>혈액형</label>
-        <select id="bloodType">
-          <option value="">선택하세요</option>
-          <option value="A">A형</option>
-          <option value="B">B형</option>
-          <option value="O">O형</option>
-          <option value="AB">AB형</option>
-        </select>
-      </div>
+.primary-btn {
+  width: 100%;
+  padding: 15px;
+  background: #3182F6;
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 8px;
+}
+.primary-btn:active { opacity: 0.85; }
 
-      <button id="submit-btn" class="primary-btn">종합운세 보기</button>
-      <p id="error-msg" class="error"></p>
-    </section>
+.ghost-btn {
+  width: 100%;
+  padding: 15px;
+  background: transparent;
+  color: #6b6b7b;
+  border: 1px solid #e3e5ec;
+  border-radius: 14px;
+  font-size: 15px;
+  margin-top: 10px;
+  cursor: pointer;
+}
 
-    <section id="result-view" class="card hidden">
-      <div class="result-header">
-        <span id="result-date" class="badge"></span>
-        <h2 id="result-element"></h2>
-        <p id="result-mbti" class="sub"></p>
-      </div>
+.error { color: #e0245e; font-size: 13px; margin-top: 10px; min-height: 16px; }
 
-      <div class="domain-list" id="domain-list"></div>
+.result-header { text-align: center; margin-bottom: 20px; }
+.badge { display: inline-block; font-size: 12px; background: #eef2ff; color: #3182F6; padding: 4px 10px; border-radius: 999px; }
+#result-element { font-size: 26px; margin: 10px 0 4px; }
 
-      <div class="lucky-box" id="lucky-box"></div>
+.domain-list { display: flex; flex-direction: column; gap: 14px; margin: 20px 0; }
+.domain-item { background: #fafafe; border-radius: 14px; padding: 14px 16px; }
+.domain-item .d-label { font-size: 13px; color: #3182F6; font-weight: 700; margin-bottom: 4px; }
+.domain-item .d-text { font-size: 14.5px; line-height: 1.6; }
 
-      <p id="disclaimer" class="disclaimer"></p>
+.lucky-box { display: flex; gap: 10px; margin-bottom: 18px; }
+.lucky-cell { flex: 1; background: #f0f1fb; border-radius: 12px; text-align: center; padding: 12px 6px; font-size: 12.5px; color: #6b6b7b; }
+.lucky-cell b { display: block; font-size: 16px; color: #1a1a2e; margin-top: 4px; }
 
-      <div class="actions">
-        <button id="share-btn" class="primary-btn">공유 카드 만들기</button>
-        <button id="back-btn" class="ghost-btn">다시 보기</button>
-      </div>
+.disclaimer { font-size: 11.5px; color: #a0a0ad; text-align: center; margin-bottom: 8px; }
 
-      <img id="card-preview" class="card-preview hidden" alt="운세 공유 카드">
-    </section>
-  </main>
+.card-preview { width: 100%; border-radius: 16px; margin-top: 16px; }
+.card-preview.hidden { display: none; }
 
-  <script src="/app.js"></script>
-</body>
-</html>
+.history-card { margin-top: 20px; }
+.history-title { font-size: 15px; margin: 0 0 12px; color: #1a1a2e; }
+.history-empty { font-size: 13px; color: #a0a0ad; margin: 0; }
+.history-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.history-table.hidden { display: none; }
+.history-table th, .history-table td { text-align: left; padding: 10px 8px; border-bottom: 1px solid #e3e5ec; }
+.history-table th { color: #6b6b7b; font-weight: 700; font-size: 12px; }
+.history-table td:first-child { white-space: nowrap; color: #6b6b7b; }
+.history-table tbody tr:last-child td { border-bottom: none; }
