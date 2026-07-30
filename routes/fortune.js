@@ -101,7 +101,7 @@ router.post('/fortune/card', async (req, res) => {
     res.send(buffer);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ ok: false, errors: ['카드 이미지 생성 중 오류가 발생했습니다.'] });
+    res.status(500).json({ ok: false, errors: ['카드 이미지 생성 중 오류가 발생했습니다.'], debug: { message: err.message, stack: String(err.stack).slice(0, 2000) } });
   }
 });
 
