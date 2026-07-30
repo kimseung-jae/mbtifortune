@@ -1,89 +1,190 @@
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  font-family: 'Pretendard', -apple-system, 'Malgun Gothic', sans-serif;
-  background: #f5f6fa;
-  color: #1a1a2e;
-}
-.wrap { max-width: 480px; margin: 0 auto; padding: 32px 20px 60px; }
-.header h1 { font-size: 24px; margin: 0 0 6px; }
-.header .sub { font-size: 14px; color: #6b6b7b; margin: 0 0 24px; }
+const $ = (id) => document.getElementById(id);
 
-.card {
-  background: #fff;
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-}
-.card.hidden { display: none; }
+let lastPayload = null;
 
-.field { margin-bottom: 18px; }
-.field label { display: block; font-size: 13px; color: #6b6b7b; margin-bottom: 6px; }
-.row { display: flex; gap: 8px; }
+const HISTORY_KEY = 'fortuneHistory';
 
-input, select {
-  width: 100%;
-  padding: 12px 14px;
-  border: 1px solid #e3e5ec;
-  border-radius: 12px;
-  font-size: 15px;
-  background: #fafafe;
-}
-.row input { flex: 1; min-width: 0; }
-.row select { flex: 0 0 90px; }
-
-.primary-btn {
-  width: 100%;
-  padding: 15px;
-  background: #3182F6;
-  color: #fff;
-  border: none;
-  border-radius: 14px;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  margin-top: 8px;
-}
-.primary-btn:active { opacity: 0.85; }
-
-.ghost-btn {
-  width: 100%;
-  padding: 15px;
-  background: transparent;
-  color: #6b6b7b;
-  border: 1px solid #e3e5ec;
-  border-radius: 14px;
-  font-size: 15px;
-  margin-top: 10px;
-  cursor: pointer;
+function loadHistory() {
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (err) {
+    return [];
+  }
 }
 
-.error { color: #e0245e; font-size: 13px; margin-top: 10px; min-height: 16px; }
+function truncate(text, max) {
+  if (!text) return '';
+  return text.length > max ? text.slice(0, max) + '…' : text;
+}
 
-.result-header { text-align: center; margin-bottom: 20px; }
-.badge { display: inline-block; font-size: 12px; background: #eef2ff; color: #3182F6; padding: 4px 10px; border-radius: 999px; }
-#result-element { font-size: 26px; margin: 10px 0 4px; }
+function buildSummary(result) {
+  const mbtiPart = result.mbti ? `${result.mbti.type} · ` : '';
+  const totalText = truncate(result.domains && result.domains['총운'], 60);
+  return `${mbtiPart}${result.dominantElement} 기운 · 총운: ${totalText}`;
+}
 
-.domain-list { display: flex; flex-direction: column; gap: 14px; margin: 20px 0; }
-.domain-item { background: #fafafe; border-radius: 14px; padding: 14px 16px; }
-.domain-item .d-label { font-size: 13px; color: #3182F6; font-weight: 700; margin-bottom: 4px; }
-.domain-item .d-text { font-size: 14.5px; line-height: 1.6; }
+function saveHistoryEntry(result) {
+  const history = loadHistory();
+  history.unshift({
+    drawnAt: new Date().toISOString(),
+    summary: buildSummary(result),
+  });
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, 100)));
+}
 
-.lucky-box { display: flex; gap: 10px; margin-bottom: 18px; }
-.lucky-cell { flex: 1; background: #f0f1fb; border-radius: 12px; text-align: center; padding: 12px 6px; font-size: 12.5px; color: #6b6b7b; }
-.lucky-cell b { display: block; font-size: 16px; color: #1a1a2e; margin-top: 4px; }
+function formatDrawnAt(iso) {
+  const d = new Date(iso);
+  return d.toLocaleString('ko-KR', {
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit',
+  });
+}
 
-.disclaimer { font-size: 11.5px; color: #a0a0ad; text-align: center; margin-bottom: 8px; }
+function renderHistory() {
+  const history = loadHistory()
+    .slice()
+    .sort((a, b) => new Date(b.drawnAt) - new Date(a.drawnAt));
 
-.card-preview { width: 100%; border-radius: 16px; margin-top: 16px; }
-.card-preview.hidden { display: none; }
+  const table = $('history-table');
+  const empty = $('history-empty');
+  const tbody = $('history-tbody');
 
-.history-card { margin-top: 20px; }
-.history-title { font-size: 15px; margin: 0 0 12px; color: #1a1a2e; }
-.history-empty { font-size: 13px; color: #a0a0ad; margin: 0; }
-.history-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.history-table.hidden { display: none; }
-.history-table th, .history-table td { text-align: left; padding: 10px 8px; border-bottom: 1px solid #e3e5ec; }
-.history-table th { color: #6b6b7b; font-weight: 700; font-size: 12px; }
-.history-table td:first-child { white-space: nowrap; color: #6b6b7b; }
-.history-table tbody tr:last-child td { border-bottom: none; }
+  if (!history.length) {
+    table.classList.add('hidden');
+    empty.classList.remove('hidden');
+    return;
+  }
+
+  empty.classList.add('hidden');
+  table.classList.remove('hidden');
+  tbody.innerHTML = history.map((item) => `
+    <tr>
+      <td>${formatDrawnAt(item.drawnAt)}</td>
+      <td>${item.summary}</td>
+    </tr>
+  `).join('');
+}
+
+function collectPayload() {
+  return {
+    calendar: $('calendar').value,
+    year: $('year').value,
+    month: $('month').value,
+    day: $('day').value,
+    hour: $('hour').value === '' ? null : $('hour').value,
+    mbti: $('mbti').value,
+    bloodType: $('bloodType').value,
+  };
+}
+
+function renderResult(result) {
+  $('result-date').textContent = result.date;
+  $('result-element').textContent = `${result.dominantElement} 기운이 강한 사주예요`;
+  $('result-mbti').textContent = result.mbti
+    ? `${result.mbti.type} · ${result.mbti.keyword}${result.bloodType ? ' · ' + result.bloodType.comment : ''}`
+    : '';
+
+  const order = ['총운', '애정운', '재물운', '직장운', '건강운'];
+  $('domain-list').innerHTML = order.map((k) => `
+    <div class="domain-item">
+      <div class="d-label">${k}</div>
+      <div class="d-text">${result.domains[k]}</div>
+    </div>
+  `).join('');
+
+  $('lucky-box').innerHTML = `
+    <div class="lucky-cell">행운의 색<b>${result.luckyItem.color}</b></div>
+    <div class="lucky-cell">행운의 숫자<b>${result.luckyItem.number}</b></div>
+    <div class="lucky-cell">행운의 방향<b>${result.luckyItem.direction}</b></div>
+  `;
+
+  $('disclaimer').textContent = result.disclaimer;
+
+  $('card-preview').classList.add('hidden');
+  $('card-preview').removeAttribute('src');
+
+  $('form-view').classList.add('hidden');
+  $('result-view').classList.remove('hidden');
+}
+
+async function submitForm() {
+  $('error-msg').textContent = '';
+  const payload = collectPayload();
+
+  if (!payload.year || !payload.month || !payload.day) {
+    $('error-msg').textContent = '생년월일을 모두 입력해주세요.';
+    return;
+  }
+  if (!payload.mbti) {
+    $('error-msg').textContent = 'MBTI를 선택해주세요.';
+    return;
+  }
+  if (!payload.bloodType) {
+    $('error-msg').textContent = '혈액형을 선택해주세요.';
+    return;
+  }
+
+  $('submit-btn').disabled = true;
+  $('submit-btn').textContent = '분석 중...';
+
+  try {
+    const res = await fetch('/api/fortune', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (!data.ok) {
+      $('error-msg').textContent = data.errors.join(' / ');
+      return;
+    }
+    lastPayload = payload;
+    renderResult(data.result);
+    saveHistoryEntry(data.result);
+    renderHistory();
+  } catch (err) {
+    $('error-msg').textContent = '서버와 통신 중 오류가 발생했습니다.';
+  } finally {
+    $('submit-btn').disabled = false;
+    $('submit-btn').textContent = '종합운세 보기';
+  }
+}
+
+async function makeShareCard() {
+  if (!lastPayload) return;
+  $('share-btn').disabled = true;
+  $('share-btn').textContent = '카드 생성 중...';
+  try {
+    const res = await fetch('/api/fortune/card', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(lastPayload),
+    });
+    if (!res.ok) throw new Error('card generation failed');
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const img = $('card-preview');
+    img.src = url;
+    img.classList.remove('hidden');
+
+    if (navigator.canShare && navigator.canShare({ files: [new File([blob], 'fortune.png', { type: 'image/png' })] })) {
+      const file = new File([blob], 'fortune.png', { type: 'image/png' });
+      await navigator.share({ files: [file], title: '오늘의 운세', text: '오늘의 종합운세 결과예요!' });
+    }
+  } catch (err) {
+    // 공유 API 미지원 브라우저에서는 이미지 미리보기만 제공
+  } finally {
+    $('share-btn').disabled = false;
+    $('share-btn').textContent = '공유 카드 만들기';
+  }
+}
+
+$('submit-btn').addEventListener('click', submitForm);
+$('share-btn').addEventListener('click', makeShareCard);
+$('back-btn').addEventListener('click', () => {
+  $('result-view').classList.add('hidden');
+  $('form-view').classList.remove('hidden');
+});
+
+renderHistory();
